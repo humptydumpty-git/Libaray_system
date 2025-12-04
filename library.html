@@ -1274,29 +1274,47 @@
             }
 
             setupReportsListeners() {
-                document.getElementById('refresh-reports-btn')?.addEventListener('click', () => {
-                    this.displayReports();
-                });
+                const refreshBtn = document.getElementById('refresh-reports-btn');
+                if (refreshBtn) {
+                    refreshBtn.addEventListener('click', () => {
+                        this.displayReports();
+                    });
+                }
 
-                document.getElementById('export-full-report-btn')?.addEventListener('click', () => {
-                    this.exportFullReport();
-                });
+                const exportFullBtn = document.getElementById('export-full-report-btn');
+                if (exportFullBtn) {
+                    exportFullBtn.addEventListener('click', () => {
+                        this.exportFullReport();
+                    });
+                }
 
-                document.getElementById('export-books-report-btn')?.addEventListener('click', () => {
-                    this.exportReportCSV('books');
-                });
+                const exportBooksBtn = document.getElementById('export-books-report-btn');
+                if (exportBooksBtn) {
+                    exportBooksBtn.addEventListener('click', () => {
+                        this.exportReportCSV('books');
+                    });
+                }
 
-                document.getElementById('export-borrowers-report-btn')?.addEventListener('click', () => {
-                    this.exportReportCSV('borrowers');
-                });
+                const exportBorrowersBtn = document.getElementById('export-borrowers-report-btn');
+                if (exportBorrowersBtn) {
+                    exportBorrowersBtn.addEventListener('click', () => {
+                        this.exportReportCSV('borrowers');
+                    });
+                }
 
-                document.getElementById('export-transactions-report-btn')?.addEventListener('click', () => {
-                    this.exportReportCSV('transactions');
-                });
+                const exportTransactionsBtn = document.getElementById('export-transactions-report-btn');
+                if (exportTransactionsBtn) {
+                    exportTransactionsBtn.addEventListener('click', () => {
+                        this.exportReportCSV('transactions');
+                    });
+                }
 
-                document.getElementById('export-overdue-report-btn')?.addEventListener('click', () => {
-                    this.exportReportCSV('overdue');
-                });
+                const exportOverdueBtn = document.getElementById('export-overdue-report-btn');
+                if (exportOverdueBtn) {
+                    exportOverdueBtn.addEventListener('click', () => {
+                        this.exportReportCSV('overdue');
+                    });
+                }
             }
 
             displayReports() {
