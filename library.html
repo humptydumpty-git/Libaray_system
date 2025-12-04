@@ -849,9 +849,12 @@
                     this.performAdvancedSearch();
                 } else {
                     // Basic search fallback
-                    const searchTerm = document.getElementById('search-input')?.value.toLowerCase() || '';
-                    const genreFilter = document.getElementById('filter-genre')?.value || '';
-                    const statusFilter = document.getElementById('filter-status')?.value || '';
+                    const searchInput = document.getElementById('search-input');
+                    const genreFilterEl = document.getElementById('filter-genre');
+                    const statusFilterEl = document.getElementById('filter-status');
+                    const searchTerm = (searchInput && searchInput.value) ? searchInput.value.toLowerCase() : '';
+                    const genreFilter = (genreFilterEl && genreFilterEl.value) ? genreFilterEl.value : '';
+                    const statusFilter = (statusFilterEl && statusFilterEl.value) ? statusFilterEl.value : '';
                     const resultsContainer = document.getElementById('search-results');
 
                     let filteredBooks = this.books.filter(book => {
@@ -911,30 +914,46 @@
             // Enhanced methods for new features
             setupAuthEventListeners() {
                 // Login form
-                document.getElementById('login-form')?.addEventListener('submit', (e) => {
-                    e.preventDefault();
-                    this.handleLogin();
-                });
+                const loginForm = document.getElementById('login-form');
+                if (loginForm) {
+                    loginForm.addEventListener('submit', (e) => {
+                        e.preventDefault();
+                        this.handleLogin();
+                    });
+                }
 
                 // Logout button
-                document.getElementById('logout-btn')?.addEventListener('click', () => {
-                    this.handleLogout();
-                });
+                const logoutBtn = document.getElementById('logout-btn');
+                if (logoutBtn) {
+                    logoutBtn.addEventListener('click', () => {
+                        this.handleLogout();
+                    });
+                }
 
                 // Change password
-                document.getElementById('change-password-btn')?.addEventListener('click', () => {
-                    this.handleChangePassword();
-                });
+                const changePasswordBtn = document.getElementById('change-password-btn');
+                if (changePasswordBtn) {
+                    changePasswordBtn.addEventListener('click', () => {
+                        this.handleChangePassword();
+                    });
+                }
 
                 // Add user (Admin only)
-                document.getElementById('add-user-btn')?.addEventListener('click', () => {
-                    document.getElementById('add-user-modal').style.display = 'block';
-                });
+                const addUserBtn = document.getElementById('add-user-btn');
+                if (addUserBtn) {
+                    addUserBtn.addEventListener('click', () => {
+                        const modal = document.getElementById('add-user-modal');
+                        if (modal) modal.style.display = 'block';
+                    });
+                }
 
-                document.getElementById('add-user-form')?.addEventListener('submit', (e) => {
-                    e.preventDefault();
-                    this.handleAddUser();
-                });
+                const addUserForm = document.getElementById('add-user-form');
+                if (addUserForm) {
+                    addUserForm.addEventListener('submit', (e) => {
+                        e.preventDefault();
+                        this.handleAddUser();
+                    });
+                }
             }
 
             handleLogin() {
@@ -966,7 +985,8 @@
 
             handleLogout() {
                 if (confirm('Are you sure you want to logout?')) {
-                    this.auditLogger.log('LOGOUT', 'USER', this.authSystem.getCurrentUser()?.id);
+                    const currentUser = this.authSystem.getCurrentUser();
+                    this.auditLogger.log('LOGOUT', 'USER', currentUser ? currentUser.id : null);
                     this.authSystem.logout();
                     location.reload();
                 }
@@ -1134,31 +1154,43 @@
 
             setupAdvancedSearchListeners() {
                 // Advanced search toggle
-                document.getElementById('advanced-search-toggle')?.addEventListener('click', () => {
-                    const panel = document.getElementById('advanced-search-panel');
-                    if (panel) {
-                        panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
-                    }
-                });
+                const advancedToggle = document.getElementById('advanced-search-toggle');
+                if (advancedToggle) {
+                    advancedToggle.addEventListener('click', () => {
+                        const panel = document.getElementById('advanced-search-panel');
+                        if (panel) {
+                            panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
+                        }
+                    });
+                }
 
                 // Populate genre checkboxes
                 this.populateGenreCheckboxes();
 
                 // Clear filters
-                document.getElementById('clear-filters-btn')?.addEventListener('click', () => {
-                    this.clearAdvancedFilters();
-                });
+                const clearFiltersBtn = document.getElementById('clear-filters-btn');
+                if (clearFiltersBtn) {
+                    clearFiltersBtn.addEventListener('click', () => {
+                        this.clearAdvancedFilters();
+                    });
+                }
 
                 // Enhanced search
-                document.getElementById('search-btn')?.addEventListener('click', () => {
-                    this.performAdvancedSearch();
-                });
-
-                document.getElementById('search-input')?.addEventListener('keypress', (e) => {
-                    if (e.key === 'Enter') {
+                const searchBtn = document.getElementById('search-btn');
+                if (searchBtn) {
+                    searchBtn.addEventListener('click', () => {
                         this.performAdvancedSearch();
-                    }
-                });
+                    });
+                }
+
+                const searchInput = document.getElementById('search-input');
+                if (searchInput) {
+                    searchInput.addEventListener('keypress', (e) => {
+                        if (e.key === 'Enter') {
+                            this.performAdvancedSearch();
+                        }
+                    });
+                }
             }
 
             populateGenreCheckboxes() {
@@ -1394,85 +1426,142 @@
 
             setupEnhancedEventListeners() {
                 // Borrowing system
-                document.getElementById('register-borrower-btn')?.addEventListener('click', () => {
-                    document.getElementById('borrower-modal').style.display = 'block';
-                });
+                const registerBorrowerBtn = document.getElementById('register-borrower-btn');
+                if (registerBorrowerBtn) {
+                    registerBorrowerBtn.addEventListener('click', () => {
+                        const modal = document.getElementById('borrower-modal');
+                        if (modal) modal.style.display = 'block';
+                    });
+                }
 
-                document.getElementById('borrower-form')?.addEventListener('submit', (e) => {
-                    e.preventDefault();
-                    this.registerBorrower();
-                });
+                const borrowerForm = document.getElementById('borrower-form');
+                if (borrowerForm) {
+                    borrowerForm.addEventListener('submit', (e) => {
+                        e.preventDefault();
+                        this.registerBorrower();
+                    });
+                }
 
-                document.getElementById('checkout-btn')?.addEventListener('click', () => {
-                    this.showCheckoutModal();
-                });
+                const checkoutBtn = document.getElementById('checkout-btn');
+                if (checkoutBtn) {
+                    checkoutBtn.addEventListener('click', () => {
+                        this.showCheckoutModal();
+                    });
+                }
 
-                document.getElementById('checkout-form')?.addEventListener('submit', (e) => {
-                    e.preventDefault();
-                    this.checkoutBook();
-                });
+                const checkoutForm = document.getElementById('checkout-form');
+                if (checkoutForm) {
+                    checkoutForm.addEventListener('submit', (e) => {
+                        e.preventDefault();
+                        this.checkoutBook();
+                    });
+                }
 
-                document.getElementById('return-btn')?.addEventListener('click', () => {
-                    this.showReturnModal();
-                });
+                const returnBtn = document.getElementById('return-btn');
+                if (returnBtn) {
+                    returnBtn.addEventListener('click', () => {
+                        this.showReturnModal();
+                    });
+                }
 
-                document.getElementById('view-overdue-btn')?.addEventListener('click', () => {
-                    this.showOverdueBooks();
-                });
+                const viewOverdueBtn = document.getElementById('view-overdue-btn');
+                if (viewOverdueBtn) {
+                    viewOverdueBtn.addEventListener('click', () => {
+                        this.showOverdueBooks();
+                    });
+                }
 
                 // Export/Import
-                document.getElementById('export-json-btn')?.addEventListener('click', () => {
-                    DataExporter.exportBooksToJSON(this.books);
-                    this.showNotification('Books exported to JSON successfully!', 'success');
-                });
+                const exportJsonBtn = document.getElementById('export-json-btn');
+                if (exportJsonBtn) {
+                    exportJsonBtn.addEventListener('click', () => {
+                        DataExporter.exportBooksToJSON(this.books);
+                        this.showNotification('Books exported to JSON successfully!', 'success');
+                    });
+                }
 
-                document.getElementById('export-csv-btn')?.addEventListener('click', () => {
-                    DataExporter.exportBooksToCSV(this.books);
-                    this.showNotification('Books exported to CSV successfully!', 'success');
-                });
+                const exportCsvBtn = document.getElementById('export-csv-btn');
+                if (exportCsvBtn) {
+                    exportCsvBtn.addEventListener('click', () => {
+                        DataExporter.exportBooksToCSV(this.books);
+                        this.showNotification('Books exported to CSV successfully!', 'success');
+                    });
+                }
 
-                document.getElementById('import-json-btn')?.addEventListener('click', () => {
-                    document.getElementById('import-file-input').accept = '.json';
-                    document.getElementById('import-file-input').click();
-                });
+                const importJsonBtn = document.getElementById('import-json-btn');
+                if (importJsonBtn) {
+                    importJsonBtn.addEventListener('click', () => {
+                        const fileInput = document.getElementById('import-file-input');
+                        if (fileInput) {
+                            fileInput.accept = '.json';
+                            fileInput.click();
+                        }
+                    });
+                }
 
-                document.getElementById('import-csv-btn')?.addEventListener('click', () => {
-                    document.getElementById('import-file-input').accept = '.csv';
-                    document.getElementById('import-file-input').click();
-                });
+                const importCsvBtn = document.getElementById('import-csv-btn');
+                if (importCsvBtn) {
+                    importCsvBtn.addEventListener('click', () => {
+                        const fileInput = document.getElementById('import-file-input');
+                        if (fileInput) {
+                            fileInput.accept = '.csv';
+                            fileInput.click();
+                        }
+                    });
+                }
 
-                document.getElementById('import-file-input')?.addEventListener('change', (e) => {
-                    this.handleFileImport(e.target.files[0]);
-                });
+                const importFileInput = document.getElementById('import-file-input');
+                if (importFileInput) {
+                    importFileInput.addEventListener('change', (e) => {
+                        if (e.target.files && e.target.files[0]) {
+                            this.handleFileImport(e.target.files[0]);
+                        }
+                    });
+                }
 
-                document.getElementById('backup-btn')?.addEventListener('click', () => {
-                    this.createBackup();
-                });
+                const backupBtn = document.getElementById('backup-btn');
+                if (backupBtn) {
+                    backupBtn.addEventListener('click', () => {
+                        this.createBackup();
+                    });
+                }
 
-                document.getElementById('restore-btn')?.addEventListener('click', () => {
-                    this.restoreFromBackup();
-                });
+                const restoreBtn = document.getElementById('restore-btn');
+                if (restoreBtn) {
+                    restoreBtn.addEventListener('click', () => {
+                        this.restoreFromBackup();
+                    });
+                }
 
                 // Settings
-                document.getElementById('export-audit-logs-btn')?.addEventListener('click', () => {
-                    const logs = this.auditLogger.exportLogs();
-                    DataExporter.downloadFile(logs, `audit-logs-${new Date().toISOString().split('T')[0]}.json`, 'application/json');
-                    this.showNotification('Audit logs exported successfully!', 'success');
-                });
+                const exportAuditLogsBtn = document.getElementById('export-audit-logs-btn');
+                if (exportAuditLogsBtn) {
+                    exportAuditLogsBtn.addEventListener('click', () => {
+                        const logs = this.auditLogger.exportLogs();
+                        DataExporter.downloadFile(logs, `audit-logs-${new Date().toISOString().split('T')[0]}.json`, 'application/json');
+                        this.showNotification('Audit logs exported successfully!', 'success');
+                    });
+                }
 
-                document.getElementById('clear-all-data-btn')?.addEventListener('click', () => {
-                    if (confirm('WARNING: This will delete ALL data including books, borrowers, and transactions. Are you absolutely sure?')) {
-                        if (confirm('This action cannot be undone. Type "DELETE" to confirm.')) {
-                            localStorage.clear();
-                            location.reload();
+                const clearAllDataBtn = document.getElementById('clear-all-data-btn');
+                if (clearAllDataBtn) {
+                    clearAllDataBtn.addEventListener('click', () => {
+                        if (confirm('WARNING: This will delete ALL data including books, borrowers, and transactions. Are you absolutely sure?')) {
+                            if (confirm('This action cannot be undone. Type "DELETE" to confirm.')) {
+                                localStorage.clear();
+                                location.reload();
+                            }
                         }
-                    }
-                });
+                    });
+                }
 
                 // Checkout from book details
-                document.getElementById('checkout-book-btn')?.addEventListener('click', () => {
-                    this.showCheckoutModal(this.currentBookId);
-                });
+                const checkoutBookBtn = document.getElementById('checkout-book-btn');
+                if (checkoutBookBtn) {
+                    checkoutBookBtn.addEventListener('click', () => {
+                        this.showCheckoutModal(this.currentBookId);
+                    });
+                }
             }
 
             registerBorrower() {

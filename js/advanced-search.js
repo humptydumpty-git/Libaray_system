@@ -21,11 +21,11 @@ class AdvancedSearch {
         if (criteria.text) {
             const searchTerm = criteria.text.toLowerCase();
             results = results.filter(book => {
-                const titleMatch = book.title?.toLowerCase().includes(searchTerm);
-                const authorMatch = book.author?.toLowerCase().includes(searchTerm);
-                const isbnMatch = book.isbn?.toLowerCase().includes(searchTerm);
-                const genreMatch = book.genre?.toLowerCase().includes(searchTerm);
-                const locationMatch = book.location?.toLowerCase().includes(searchTerm);
+                const titleMatch = book.title && book.title.toLowerCase().includes(searchTerm);
+                const authorMatch = book.author && book.author.toLowerCase().includes(searchTerm);
+                const isbnMatch = book.isbn && book.isbn.toLowerCase().includes(searchTerm);
+                const genreMatch = book.genre && book.genre.toLowerCase().includes(searchTerm);
+                const locationMatch = book.location && book.location.toLowerCase().includes(searchTerm);
                 
                 return titleMatch || authorMatch || isbnMatch || genreMatch || locationMatch;
             });
@@ -146,13 +146,13 @@ class AdvancedSearch {
         const suggestions = new Set();
 
         this.books.forEach(book => {
-            if (book.title?.toLowerCase().includes(lowerQuery)) {
+            if (book.title && book.title.toLowerCase().includes(lowerQuery)) {
                 suggestions.add(book.title);
             }
-            if (book.author?.toLowerCase().includes(lowerQuery)) {
+            if (book.author && book.author.toLowerCase().includes(lowerQuery)) {
                 suggestions.add(book.author);
             }
-            if (book.genre?.toLowerCase().includes(lowerQuery)) {
+            if (book.genre && book.genre.toLowerCase().includes(lowerQuery)) {
                 suggestions.add(book.genre);
             }
         });
