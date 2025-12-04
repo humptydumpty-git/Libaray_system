@@ -7,10 +7,39 @@
     <link rel="stylesheet" href="library.css">
 </head>
 <body>
-    <div class="container">
+    <!-- Login Modal -->
+    <div id="login-modal" class="modal" style="display: block;">
+        <div class="modal-content" style="max-width: 400px;">
+            <h2>Login to Library System</h2>
+            <form id="login-form">
+                <div class="form-group">
+                    <label for="login-username">Username</label>
+                    <input type="text" id="login-username" name="username" required autofocus>
+                </div>
+                <div class="form-group">
+                    <label for="login-password">Password</label>
+                    <input type="password" id="login-password" name="password" required>
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%;">Login</button>
+            </form>
+            <div style="margin-top: 15px; text-align: center; font-size: 0.9rem; color: #6c757d;">
+                <p>Default Admin: <strong>admin</strong> / <strong>admin123</strong></p>
+            </div>
+        </div>
+    </div>
+
+    <div class="container" id="main-container" style="display: none;">
         <header>
-            <h1>📚 Library Management System</h1>
-            <p>Professional Library Management with Enhanced Security & Features</p>
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                    <h1>📚 Library Management System</h1>
+                    <p>Professional Library Management with Enhanced Security & Features</p>
+                </div>
+                <div style="text-align: right;">
+                    <div id="user-info" style="margin-bottom: 10px;"></div>
+                    <button id="logout-btn" class="btn btn-secondary">Logout</button>
+                </div>
+            </div>
         </header>
 
         <nav class="tabs">
@@ -118,40 +147,83 @@
             <!-- Search Books Section -->
             <section id="search-books" class="tab-content">
                 <div class="search-container">
-                    <h2>Search Books</h2>
+                    <h2>Advanced Search</h2>
                     
                     <div class="search-form">
                         <div class="search-group">
-                            <input type="text" id="search-input" placeholder="Search by title, author, or ISBN...">
+                            <input type="text" id="search-input" placeholder="Search by title, author, ISBN, genre, or location...">
                             <button id="search-btn" class="btn btn-primary">Search</button>
+                            <button id="advanced-search-toggle" class="btn btn-secondary">Advanced Options</button>
                         </div>
                         
-                        <div class="filter-group">
-                            <select id="filter-genre">
-                                <option value="">All Genres</option>
-                                <option value="Fiction">Fiction</option>
-                                <option value="Non-Fiction">Non-Fiction</option>
-                                <option value="Science Fiction">Science Fiction</option>
-                                <option value="Fantasy">Fantasy</option>
-                                <option value="Mystery">Mystery</option>
-                                <option value="Romance">Romance</option>
-                                <option value="Biography">Biography</option>
-                                <option value="History">History</option>
-                                <option value="Science">Science</option>
-                                <option value="Technology">Technology</option>
-                                <option value="Education">Education</option>
-                                <option value="Other">Other</option>
-                            </select>
+                        <div id="advanced-search-panel" style="display: none; margin-top: 20px; padding: 20px; background: #f8f9fa; border-radius: 8px;">
+                            <h3 style="margin-bottom: 15px;">Advanced Filters</h3>
                             
-                            <select id="filter-status">
-                                <option value="">All Status</option>
-                                <option value="Available">Available</option>
-                                <option value="Borrowed">Borrowed</option>
-                                <option value="Reserved">Reserved</option>
-                                <option value="Lost">Lost</option>
-                            </select>
+                            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
+                                <div class="form-group">
+                                    <label>Genres (Multiple)</label>
+                                    <div id="genre-checkboxes" style="max-height: 150px; overflow-y: auto; border: 1px solid #e9ecef; padding: 10px; border-radius: 4px; background: white;">
+                                        <!-- Will be populated dynamically -->
+                                    </div>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label>Status (Multiple)</label>
+                                    <div id="status-checkboxes" style="border: 1px solid #e9ecef; padding: 10px; border-radius: 4px; background: white;">
+                                        <label style="display: block; margin: 5px 0;"><input type="checkbox" value="Available" class="status-checkbox"> Available</label>
+                                        <label style="display: block; margin: 5px 0;"><input type="checkbox" value="Borrowed" class="status-checkbox"> Borrowed</label>
+                                        <label style="display: block; margin: 5px 0;"><input type="checkbox" value="Reserved" class="status-checkbox"> Reserved</label>
+                                        <label style="display: block; margin: 5px 0;"><input type="checkbox" value="Lost" class="status-checkbox"> Lost</label>
+                                    </div>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label>Publication Year From</label>
+                                    <input type="number" id="year-from" min="1000" max="2025" placeholder="e.g., 2000">
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label>Publication Year To</label>
+                                    <input type="number" id="year-to" min="1000" max="2025" placeholder="e.g., 2024">
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label>Availability</label>
+                                    <select id="availability-filter">
+                                        <option value="">All</option>
+                                        <option value="available">Available Only</option>
+                                        <option value="borrowed">Borrowed Only</option>
+                                        <option value="overdue">Overdue Only</option>
+                                    </select>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label>Sort By</label>
+                                    <select id="sort-by">
+                                        <option value="title">Title</option>
+                                        <option value="author">Author</option>
+                                        <option value="publicationYear">Publication Year</option>
+                                        <option value="dateAdded">Date Added</option>
+                                        <option value="genre">Genre</option>
+                                    </select>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label>Sort Order</label>
+                                    <select id="sort-order">
+                                        <option value="asc">Ascending</option>
+                                        <option value="desc">Descending</option>
+                                    </select>
+                                </div>
+                            </div>
+                            
+                            <div style="margin-top: 15px;">
+                                <button id="clear-filters-btn" class="btn btn-secondary">Clear Filters</button>
+                            </div>
                         </div>
                     </div>
+                    
+                    <div id="search-stats" style="margin: 20px 0; padding: 15px; background: white; border-radius: 8px; display: none;"></div>
                     
                     <div class="search-results" id="search-results">
                         <!-- Search results will be displayed here -->
@@ -185,19 +257,19 @@
             <!-- Reports Section -->
             <section id="reports" class="tab-content">
                 <div class="reports-container">
-                    <h2>Reports & Analytics</h2>
+                    <h2>Reports & Analytics Dashboard</h2>
                     
                     <div class="reports-actions">
-                        <button id="export-json-btn" class="btn btn-primary">Export to JSON</button>
-                        <button id="export-csv-btn" class="btn btn-primary">Export to CSV</button>
-                        <button id="import-json-btn" class="btn btn-secondary">Import from JSON</button>
-                        <button id="import-csv-btn" class="btn btn-secondary">Import from CSV</button>
-                        <button id="backup-btn" class="btn btn-success">Create Backup</button>
-                        <button id="restore-btn" class="btn btn-warning">Restore from Backup</button>
+                        <button id="refresh-reports-btn" class="btn btn-primary">Refresh Reports</button>
+                        <button id="export-full-report-btn" class="btn btn-success">Export Full Report</button>
+                        <button id="export-books-report-btn" class="btn btn-secondary">Export Books CSV</button>
+                        <button id="export-borrowers-report-btn" class="btn btn-secondary">Export Borrowers CSV</button>
+                        <button id="export-transactions-report-btn" class="btn btn-secondary">Export Transactions CSV</button>
+                        <button id="export-overdue-report-btn" class="btn btn-warning">Export Overdue CSV</button>
                     </div>
 
-                    <div class="reports-stats" id="reports-stats">
-                        <!-- Reports statistics will be displayed here -->
+                    <div class="reports-dashboard" id="reports-dashboard">
+                        <!-- Dashboard will be populated here -->
                     </div>
                 </div>
             </section>
@@ -207,10 +279,35 @@
                 <div class="settings-container">
                     <h2>System Settings</h2>
                     
+                    <div class="settings-section" id="user-management-section" style="display: none;">
+                        <h3>User Management</h3>
+                        <button id="add-user-btn" class="btn btn-primary">Add New User</button>
+                        <div id="users-list" style="margin-top: 20px;"></div>
+                    </div>
+
+                    <div class="settings-section">
+                        <h3>Account Settings</h3>
+                        <div class="form-group">
+                            <label for="change-password-old">Current Password</label>
+                            <input type="password" id="change-password-old">
+                        </div>
+                        <div class="form-group">
+                            <label for="change-password-new">New Password</label>
+                            <input type="password" id="change-password-new">
+                        </div>
+                        <button id="change-password-btn" class="btn btn-primary">Change Password</button>
+                    </div>
+
                     <div class="settings-section">
                         <h3>Data Management</h3>
-                        <button id="clear-all-data-btn" class="btn btn-danger">Clear All Data</button>
+                        <button id="export-json-btn" class="btn btn-primary">Export to JSON</button>
+                        <button id="export-csv-btn" class="btn btn-primary">Export to CSV</button>
+                        <button id="import-json-btn" class="btn btn-secondary">Import from JSON</button>
+                        <button id="import-csv-btn" class="btn btn-secondary">Import from CSV</button>
+                        <button id="backup-btn" class="btn btn-success">Create Backup</button>
+                        <button id="restore-btn" class="btn btn-warning">Restore from Backup</button>
                         <button id="export-audit-logs-btn" class="btn btn-secondary">Export Audit Logs</button>
+                        <button id="clear-all-data-btn" class="btn btn-danger" style="display: none;">Clear All Data</button>
                     </div>
 
                     <div class="settings-section">
@@ -361,6 +458,41 @@
         </div>
     </div>
 
+    <!-- Add User Modal -->
+    <div id="add-user-modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Add New User</h2>
+            <form id="add-user-form">
+                <div class="form-group">
+                    <label for="new-user-username">Username *</label>
+                    <input type="text" id="new-user-username" name="username" required>
+                </div>
+                <div class="form-group">
+                    <label for="new-user-email">Email *</label>
+                    <input type="email" id="new-user-email" name="email" required>
+                </div>
+                <div class="form-group">
+                    <label for="new-user-password">Password *</label>
+                    <input type="password" id="new-user-password" name="password" required>
+                    <small class="form-hint">Minimum 6 characters</small>
+                </div>
+                <div class="form-group">
+                    <label for="new-user-fullname">Full Name</label>
+                    <input type="text" id="new-user-fullname" name="fullName">
+                </div>
+                <div class="form-group">
+                    <label for="new-user-role">Role *</label>
+                    <select id="new-user-role" name="role" required>
+                        <option value="Member">Member</option>
+                        <option value="Librarian">Librarian</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-primary">Create User</button>
+            </form>
+        </div>
+    </div>
+
     <!-- Import File Input (hidden) -->
     <input type="file" id="import-file-input" accept=".json,.csv" style="display: none;">
 
@@ -369,22 +501,63 @@
     <script src="js/audit-logger.js"></script>
     <script src="js/borrowing-system.js"></script>
     <script src="js/data-export.js"></script>
+    <script src="js/auth-system.js"></script>
+    <script src="js/advanced-search.js"></script>
+    <script src="js/reports-dashboard.js"></script>
     
     <script>
         // Enhanced Library Management JavaScript
         class LibraryManager {
             constructor() {
+                this.authSystem = new AuthSystem();
                 this.books = JSON.parse(localStorage.getItem('libraryBooks')) || [];
                 this.currentBookId = null;
                 this.auditLogger = new AuditLogger();
                 this.borrowingSystem = new BorrowingSystem();
-                this.init();
+                this.advancedSearch = null;
+                this.reportsDashboard = null;
+                
+                // Check if user is logged in
+                if (!this.authSystem.isAuthenticated()) {
+                    this.showLoginModal();
+                } else {
+                    this.init();
+                }
+            }
+
+            showLoginModal() {
+                document.getElementById('login-modal').style.display = 'block';
+                document.getElementById('main-container').style.display = 'none';
+            }
+
+            hideLoginModal() {
+                document.getElementById('login-modal').style.display = 'none';
+                document.getElementById('main-container').style.display = 'block';
             }
 
             init() {
+                if (!this.authSystem.isAuthenticated()) {
+                    this.showLoginModal();
+                    return;
+                }
+
+                // Initialize advanced search and reports
+                this.advancedSearch = new AdvancedSearch(this.books, this.borrowingSystem);
+                this.reportsDashboard = new ReportsDashboard(this.books, this.borrowingSystem, this.auditLogger);
+
                 this.setupEventListeners();
+                this.setupAuthEventListeners();
+                this.setupAdvancedSearchListeners();
+                this.setupReportsListeners();
+                this.updateUIForRole();
                 this.displayBooks();
                 this.updateStats();
+                this.displayReports();
+                this.hideLoginModal();
+            }
+
+            init() {
+                // Already handled in new init() method above
             }
 
             setupEventListeners() {
@@ -406,22 +579,8 @@
                     this.updateBook();
                 });
 
-                // Search functionality
-                document.getElementById('search-btn').addEventListener('click', () => {
-                    this.searchBooks();
-                });
-
-                document.getElementById('search-input').addEventListener('input', () => {
-                    this.searchBooks();
-                });
-
-                document.getElementById('filter-genre').addEventListener('change', () => {
-                    this.searchBooks();
-                });
-
-                document.getElementById('filter-status').addEventListener('change', () => {
-                    this.searchBooks();
-                });
+                // Search functionality (basic search - advanced search handled separately)
+                // Advanced search listeners are set up in setupAdvancedSearchListeners()
 
                 // Modal functionality
                 document.querySelectorAll('.close').forEach(closeBtn => {
@@ -677,24 +836,30 @@
             }
 
             searchBooks() {
-                const searchTerm = document.getElementById('search-input').value.toLowerCase();
-                const genreFilter = document.getElementById('filter-genre').value;
-                const statusFilter = document.getElementById('filter-status').value;
-                const resultsContainer = document.getElementById('search-results');
+                // Use advanced search if available, otherwise fall back to basic search
+                if (this.advancedSearch) {
+                    this.performAdvancedSearch();
+                } else {
+                    // Basic search fallback
+                    const searchTerm = document.getElementById('search-input')?.value.toLowerCase() || '';
+                    const genreFilter = document.getElementById('filter-genre')?.value || '';
+                    const statusFilter = document.getElementById('filter-status')?.value || '';
+                    const resultsContainer = document.getElementById('search-results');
 
-                let filteredBooks = this.books.filter(book => {
-                    const matchesSearch = !searchTerm || 
-                        book.title.toLowerCase().includes(searchTerm) ||
-                        book.author.toLowerCase().includes(searchTerm) ||
-                        (book.isbn && book.isbn.toLowerCase().includes(searchTerm));
+                    let filteredBooks = this.books.filter(book => {
+                        const matchesSearch = !searchTerm || 
+                            book.title.toLowerCase().includes(searchTerm) ||
+                            book.author.toLowerCase().includes(searchTerm) ||
+                            (book.isbn && book.isbn.toLowerCase().includes(searchTerm));
 
-                    const matchesGenre = !genreFilter || book.genre === genreFilter;
-                    const matchesStatus = !statusFilter || book.status === statusFilter;
+                        const matchesGenre = !genreFilter || book.genre === genreFilter;
+                        const matchesStatus = !statusFilter || book.status === statusFilter;
 
-                    return matchesSearch && matchesGenre && matchesStatus;
-                });
+                        return matchesSearch && matchesGenre && matchesStatus;
+                    });
 
-                this.displaySearchResults(filteredBooks, resultsContainer);
+                    this.displaySearchResults(filteredBooks, resultsContainer);
+                }
             }
 
             displaySearchResults(books, container) {
@@ -736,6 +901,476 @@
             }
 
             // Enhanced methods for new features
+            setupAuthEventListeners() {
+                // Login form
+                document.getElementById('login-form')?.addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    this.handleLogin();
+                });
+
+                // Logout button
+                document.getElementById('logout-btn')?.addEventListener('click', () => {
+                    this.handleLogout();
+                });
+
+                // Change password
+                document.getElementById('change-password-btn')?.addEventListener('click', () => {
+                    this.handleChangePassword();
+                });
+
+                // Add user (Admin only)
+                document.getElementById('add-user-btn')?.addEventListener('click', () => {
+                    document.getElementById('add-user-modal').style.display = 'block';
+                });
+
+                document.getElementById('add-user-form')?.addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    this.handleAddUser();
+                });
+            }
+
+            handleLogin() {
+                const username = document.getElementById('login-username').value;
+                const password = document.getElementById('login-password').value;
+
+                const result = this.authSystem.login(username, password);
+                if (result.success) {
+                    this.auditLogger.log('LOGIN', 'USER', result.user.id, { username: result.user.username });
+                    this.init();
+                    this.showNotification('Login successful!', 'success');
+                } else {
+                    this.showNotification(result.error, 'error');
+                }
+            }
+
+            handleLogout() {
+                if (confirm('Are you sure you want to logout?')) {
+                    this.auditLogger.log('LOGOUT', 'USER', this.authSystem.getCurrentUser()?.id);
+                    this.authSystem.logout();
+                    location.reload();
+                }
+            }
+
+            handleChangePassword() {
+                const oldPassword = document.getElementById('change-password-old').value;
+                const newPassword = document.getElementById('change-password-new').value;
+
+                if (!oldPassword || !newPassword) {
+                    this.showNotification('Please fill in both password fields', 'error');
+                    return;
+                }
+
+                const result = this.authSystem.changePassword(oldPassword, newPassword);
+                if (result.success) {
+                    document.getElementById('change-password-old').value = '';
+                    document.getElementById('change-password-new').value = '';
+                    this.showNotification('Password changed successfully!', 'success');
+                } else {
+                    this.showNotification(result.error, 'error');
+                }
+            }
+
+            handleAddUser() {
+                if (!this.authSystem.hasRole('Admin')) {
+                    this.showNotification('Only administrators can add users', 'error');
+                    return;
+                }
+
+                const formData = new FormData(document.getElementById('add-user-form'));
+                const userData = {
+                    username: formData.get('username'),
+                    email: formData.get('email'),
+                    password: formData.get('password'),
+                    fullName: formData.get('fullName'),
+                    role: formData.get('role')
+                };
+
+                const result = this.authSystem.register(userData);
+                if (result.success) {
+                    this.auditLogger.log('CREATE', 'USER', result.user.id, { username: result.user.username, role: result.user.role });
+                    document.getElementById('add-user-form').reset();
+                    document.getElementById('add-user-modal').style.display = 'none';
+                    this.showNotification('User created successfully!', 'success');
+                    this.displayUsers();
+                } else {
+                    this.showNotification(result.error, 'error');
+                }
+            }
+
+            updateUIForRole() {
+                const user = this.authSystem.getCurrentUser();
+                if (!user) return;
+
+                // Update user info display
+                const userInfo = document.getElementById('user-info');
+                if (userInfo) {
+                    userInfo.innerHTML = `
+                        <strong>${user.fullName || user.username}</strong><br>
+                        <small>${user.role}</small>
+                    `;
+                }
+
+                // Show/hide features based on role
+                const canAdd = this.authSystem.hasPermission('add');
+                const canEdit = this.authSystem.hasPermission('edit');
+                const canDelete = this.authSystem.hasPermission('delete');
+                const canManageBorrowers = this.authSystem.hasPermission('manage_borrowers');
+                const canExport = this.authSystem.hasPermission('export');
+                const canImport = this.authSystem.hasPermission('import');
+                const isAdmin = this.authSystem.hasRole('Admin');
+
+                // Add Book tab
+                const addBookTab = document.querySelector('[data-tab="add-book"]');
+                if (addBookTab) addBookTab.style.display = canAdd ? 'block' : 'none';
+
+                // Edit/Delete buttons
+                const editBtn = document.getElementById('edit-book');
+                const deleteBtn = document.getElementById('delete-book');
+                if (editBtn) editBtn.style.display = canEdit ? 'inline-block' : 'none';
+                if (deleteBtn) deleteBtn.style.display = canDelete ? 'inline-block' : 'none';
+
+                // Borrowing features
+                const registerBorrowerBtn = document.getElementById('register-borrower-btn');
+                if (registerBorrowerBtn) registerBorrowerBtn.style.display = canManageBorrowers ? 'inline-block' : 'none';
+
+                // Export/Import buttons
+                const exportBtns = document.querySelectorAll('[id$="-export-btn"], [id$="-import-btn"]');
+                exportBtns.forEach(btn => {
+                    if (btn.id.includes('export')) {
+                        btn.style.display = canExport ? 'inline-block' : 'none';
+                    } else if (btn.id.includes('import')) {
+                        btn.style.display = canImport ? 'inline-block' : 'none';
+                    }
+                });
+
+                // User management (Admin only)
+                const userManagementSection = document.getElementById('user-management-section');
+                if (userManagementSection) userManagementSection.style.display = isAdmin ? 'block' : 'none';
+
+                // Clear data button (Admin only)
+                const clearDataBtn = document.getElementById('clear-all-data-btn');
+                if (clearDataBtn) clearDataBtn.style.display = isAdmin ? 'inline-block' : 'none';
+
+                if (isAdmin) {
+                    this.displayUsers();
+                }
+            }
+
+            displayUsers() {
+                if (!this.authSystem.hasRole('Admin')) return;
+
+                const container = document.getElementById('users-list');
+                if (!container) return;
+
+                const users = this.authSystem.getAllUsers();
+                container.innerHTML = '<h4>Registered Users</h4>';
+
+                if (users.length === 0) {
+                    container.innerHTML += '<p>No users found.</p>';
+                    return;
+                }
+
+                users.forEach(user => {
+                    const div = document.createElement('div');
+                    div.className = 'borrower-card';
+                    div.innerHTML = `
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <div>
+                                <h4>${user.fullName || user.username}</h4>
+                                <p>${user.email} | Role: ${user.role}</p>
+                                <small>Created: ${new Date(user.createdAt).toLocaleDateString()}</small>
+                            </div>
+                            <select class="user-role-select" data-user-id="${user.id}" style="padding: 5px;">
+                                <option value="Member" ${user.role === 'Member' ? 'selected' : ''}>Member</option>
+                                <option value="Librarian" ${user.role === 'Librarian' ? 'selected' : ''}>Librarian</option>
+                                <option value="Admin" ${user.role === 'Admin' ? 'selected' : ''}>Admin</option>
+                            </select>
+                        </div>
+                    `;
+                    container.appendChild(div);
+                });
+
+                // Add event listeners for role changes
+                container.querySelectorAll('.user-role-select').forEach(select => {
+                    select.addEventListener('change', (e) => {
+                        const userId = e.target.dataset.userId;
+                        const newRole = e.target.value;
+                        this.handleRoleChange(userId, newRole);
+                    });
+                });
+            }
+
+            handleRoleChange(userId, newRole) {
+                const result = this.authSystem.updateUserRole(userId, newRole);
+                if (result.success) {
+                    this.auditLogger.log('UPDATE', 'USER', userId, { role: newRole });
+                    this.showNotification('User role updated successfully!', 'success');
+                    this.displayUsers();
+                } else {
+                    this.showNotification(result.error, 'error');
+                }
+            }
+
+            setupAdvancedSearchListeners() {
+                // Advanced search toggle
+                document.getElementById('advanced-search-toggle')?.addEventListener('click', () => {
+                    const panel = document.getElementById('advanced-search-panel');
+                    if (panel) {
+                        panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
+                    }
+                });
+
+                // Populate genre checkboxes
+                this.populateGenreCheckboxes();
+
+                // Clear filters
+                document.getElementById('clear-filters-btn')?.addEventListener('click', () => {
+                    this.clearAdvancedFilters();
+                });
+
+                // Enhanced search
+                document.getElementById('search-btn')?.addEventListener('click', () => {
+                    this.performAdvancedSearch();
+                });
+
+                document.getElementById('search-input')?.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') {
+                        this.performAdvancedSearch();
+                    }
+                });
+            }
+
+            populateGenreCheckboxes() {
+                if (!this.advancedSearch) return;
+                const container = document.getElementById('genre-checkboxes');
+                if (!container) return;
+
+                const genres = this.advancedSearch.getAvailableGenres();
+                container.innerHTML = '';
+
+                genres.forEach(genre => {
+                    const label = document.createElement('label');
+                    label.style.display = 'block';
+                    label.style.margin = '5px 0';
+                    label.innerHTML = `<input type="checkbox" value="${genre}" class="genre-checkbox"> ${genre}`;
+                    container.appendChild(label);
+                });
+            }
+
+            clearAdvancedFilters() {
+                document.getElementById('search-input').value = '';
+                document.querySelectorAll('.genre-checkbox').forEach(cb => cb.checked = false);
+                document.querySelectorAll('.status-checkbox').forEach(cb => cb.checked = false);
+                document.getElementById('year-from').value = '';
+                document.getElementById('year-to').value = '';
+                document.getElementById('availability-filter').value = '';
+                document.getElementById('sort-by').value = 'title';
+                document.getElementById('sort-order').value = 'asc';
+                this.performAdvancedSearch();
+            }
+
+            performAdvancedSearch() {
+                if (!this.advancedSearch) return;
+
+                const criteria = {
+                    text: document.getElementById('search-input').value,
+                    genres: Array.from(document.querySelectorAll('.genre-checkbox:checked')).map(cb => cb.value),
+                    statuses: Array.from(document.querySelectorAll('.status-checkbox:checked')).map(cb => cb.value),
+                    yearFrom: document.getElementById('year-from').value,
+                    yearTo: document.getElementById('year-to').value,
+                    availability: document.getElementById('availability-filter').value,
+                    sortBy: document.getElementById('sort-by').value,
+                    sortOrder: document.getElementById('sort-order').value
+                };
+
+                const results = this.advancedSearch.search(criteria);
+                const stats = this.advancedSearch.getSearchStats(results);
+                
+                this.displaySearchResults(results, document.getElementById('search-results'));
+                this.displaySearchStats(stats);
+            }
+
+            displaySearchStats(stats) {
+                const container = document.getElementById('search-stats');
+                if (!container) return;
+
+                if (stats.totalResults === 0) {
+                    container.style.display = 'none';
+                    return;
+                }
+
+                container.style.display = 'block';
+                container.innerHTML = `
+                    <h3>Search Results: ${stats.totalResults} book(s) found</h3>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-top: 15px;">
+                        <div>
+                            <strong>By Genre:</strong>
+                            <ul style="margin: 5px 0; padding-left: 20px;">
+                                ${Object.entries(stats.byGenre).map(([genre, count]) => `<li>${genre}: ${count}</li>`).join('')}
+                            </ul>
+                        </div>
+                        <div>
+                            <strong>By Status:</strong>
+                            <ul style="margin: 5px 0; padding-left: 20px;">
+                                ${Object.entries(stats.byStatus).map(([status, count]) => `<li>${status}: ${count}</li>`).join('')}
+                            </ul>
+                        </div>
+                        ${stats.averageYear ? `<div><strong>Average Publication Year:</strong> ${stats.averageYear}</div>` : ''}
+                    </div>
+                `;
+            }
+
+            setupReportsListeners() {
+                document.getElementById('refresh-reports-btn')?.addEventListener('click', () => {
+                    this.displayReports();
+                });
+
+                document.getElementById('export-full-report-btn')?.addEventListener('click', () => {
+                    this.exportFullReport();
+                });
+
+                document.getElementById('export-books-report-btn')?.addEventListener('click', () => {
+                    this.exportReportCSV('books');
+                });
+
+                document.getElementById('export-borrowers-report-btn')?.addEventListener('click', () => {
+                    this.exportReportCSV('borrowers');
+                });
+
+                document.getElementById('export-transactions-report-btn')?.addEventListener('click', () => {
+                    this.exportReportCSV('transactions');
+                });
+
+                document.getElementById('export-overdue-report-btn')?.addEventListener('click', () => {
+                    this.exportReportCSV('overdue');
+                });
+            }
+
+            displayReports() {
+                if (!this.reportsDashboard) return;
+
+                const container = document.getElementById('reports-dashboard');
+                if (!container) return;
+
+                const stats = this.reportsDashboard.getLibraryStats();
+                const popularBooks = this.reportsDashboard.getPopularBooks(5);
+                const genreDistribution = this.reportsDashboard.getGenreDistribution();
+                const borrowerActivity = this.reportsDashboard.getBorrowerActivity(5);
+                const overdueReport = this.reportsDashboard.getOverdueReport();
+
+                container.innerHTML = `
+                    <div class="reports-grid">
+                        <div class="report-section">
+                            <h3>Library Statistics</h3>
+                            <div class="stats-grid">
+                                <div class="stat-card">
+                                    <span class="stat-number">${stats.totalBooks}</span>
+                                    <span class="stat-label">Total Books</span>
+                                </div>
+                                <div class="stat-card">
+                                    <span class="stat-number">${stats.availableBooks}</span>
+                                    <span class="stat-label">Available</span>
+                                </div>
+                                <div class="stat-card">
+                                    <span class="stat-number">${stats.borrowedBooks}</span>
+                                    <span class="stat-label">Borrowed</span>
+                                </div>
+                                <div class="stat-card">
+                                    <span class="stat-number">${stats.activeLoans}</span>
+                                    <span class="stat-label">Active Loans</span>
+                                </div>
+                                <div class="stat-card">
+                                    <span class="stat-number">${stats.overdueLoans}</span>
+                                    <span class="stat-label">Overdue</span>
+                                </div>
+                                <div class="stat-card">
+                                    <span class="stat-number">${stats.totalBorrowers}</span>
+                                    <span class="stat-label">Borrowers</span>
+                                </div>
+                                <div class="stat-card">
+                                    <span class="stat-number">$${stats.totalFines.toFixed(2)}</span>
+                                    <span class="stat-label">Total Fines</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="report-section">
+                            <h3>Popular Books (Top 5)</h3>
+                            <div class="popular-books-list">
+                                ${popularBooks.length > 0 ? popularBooks.map((item, index) => `
+                                    <div class="popular-book-item">
+                                        <span class="rank">${index + 1}</span>
+                                        <div>
+                                            <strong>${item.book.title}</strong><br>
+                                            <small>by ${item.book.author}</small>
+                                        </div>
+                                        <span class="borrow-count">${item.borrowCount} borrows</span>
+                                    </div>
+                                `).join('') : '<p>No borrowing data available</p>'}
+                            </div>
+                        </div>
+
+                        <div class="report-section">
+                            <h3>Genre Distribution</h3>
+                            <div class="genre-list">
+                                ${genreDistribution.map(item => `
+                                    <div class="genre-item">
+                                        <span class="genre-name">${item.genre}</span>
+                                        <div class="genre-bar">
+                                            <div class="genre-bar-fill" style="width: ${item.percentage}%"></div>
+                                        </div>
+                                        <span class="genre-count">${item.count} (${item.percentage}%)</span>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+
+                        <div class="report-section">
+                            <h3>Active Borrowers (Top 5)</h3>
+                            <div class="borrower-activity-list">
+                                ${borrowerActivity.length > 0 ? borrowerActivity.map(item => `
+                                    <div class="borrower-activity-item">
+                                        <strong>${item.borrower.name}</strong>
+                                        <div style="margin-top: 5px; font-size: 0.9rem;">
+                                            Total: ${item.totalBorrows} | Active: ${item.activeLoans} | Overdue: ${item.overdueLoans}
+                                            ${item.totalFines > 0 ? ` | Fines: $${item.totalFines.toFixed(2)}` : ''}
+                                        </div>
+                                    </div>
+                                `).join('') : '<p>No borrower activity</p>'}
+                            </div>
+                        </div>
+
+                        <div class="report-section">
+                            <h3>Overdue Books (${overdueReport.length})</h3>
+                            <div class="overdue-list">
+                                ${overdueReport.length > 0 ? overdueReport.slice(0, 10).map(item => `
+                                    <div class="overdue-item">
+                                        <strong>${item.book ? item.book.title : 'Unknown'}</strong><br>
+                                        <small>Borrower: ${item.borrower ? item.borrower.name : 'Unknown'}</small><br>
+                                        <small>Due: ${item.dueDate.toLocaleDateString()} | Days Overdue: ${item.daysOverdue} | Fine: $${item.fine.toFixed(2)}</small>
+                                    </div>
+                                `).join('') : '<p>No overdue books</p>'}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+
+            exportFullReport() {
+                if (!this.reportsDashboard) return;
+                const report = this.reportsDashboard.generateFullReport();
+                const json = this.reportsDashboard.exportReportToJSON(report);
+                DataExporter.downloadFile(json, `library-report-${new Date().toISOString().split('T')[0]}.json`, 'application/json');
+                this.showNotification('Full report exported successfully!', 'success');
+            }
+
+            exportReportCSV(type) {
+                if (!this.reportsDashboard) return;
+                const csv = this.reportsDashboard.exportReportToCSV(type);
+                DataExporter.downloadFile(csv, `${type}-report-${new Date().toISOString().split('T')[0]}.csv`, 'text/csv');
+                this.showNotification(`${type} report exported successfully!`, 'success');
+            }
+
             setupEnhancedEventListeners() {
                 // Borrowing system
                 document.getElementById('register-borrower-btn')?.addEventListener('click', () => {
