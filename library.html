@@ -517,11 +517,25 @@
                 this.advancedSearch = null;
                 this.reportsDashboard = null;
                 
+                // Set up login form listener immediately (before checking auth)
+                this.setupLoginForm();
+                
                 // Check if user is logged in
                 if (!this.authSystem.isAuthenticated()) {
                     this.showLoginModal();
                 } else {
                     this.init();
+                }
+            }
+
+            setupLoginForm() {
+                // Set up login form event listener
+                const loginForm = document.getElementById('login-form');
+                if (loginForm) {
+                    loginForm.addEventListener('submit', (e) => {
+                        e.preventDefault();
+                        this.handleLogin();
+                    });
                 }
             }
 
@@ -548,6 +562,12 @@
                 }
 
                 try {
+                    // Hide login modal and show main container first
+                    const loginModal = document.getElementById('login-modal');
+                    const mainContainer = document.getElementById('main-container');
+                    if (loginModal) loginModal.style.display = 'none';
+                    if (mainContainer) mainContainer.style.display = 'block';
+
                     // Initialize advanced search and reports
                     this.advancedSearch = new AdvancedSearch(this.books, this.borrowingSystem);
                     this.reportsDashboard = new ReportsDashboard(this.books, this.borrowingSystem, this.auditLogger);
@@ -913,15 +933,7 @@
 
             // Enhanced methods for new features
             setupAuthEventListeners() {
-                // Login form
-                const loginForm = document.getElementById('login-form');
-                if (loginForm) {
-                    loginForm.addEventListener('submit', (e) => {
-                        e.preventDefault();
-                        this.handleLogin();
-                    });
-                }
-
+                // Login form is already set up in constructor
                 // Logout button
                 const logoutBtn = document.getElementById('logout-btn');
                 if (logoutBtn) {
@@ -970,14 +982,12 @@
                     this.auditLogger.log('LOGIN', 'USER', result.user.id, { username: result.user.username });
                     // Reinitialize books data after login
                     this.books = JSON.parse(localStorage.getItem('libraryBooks')) || [];
-                    // Hide login modal first
-                    const loginModal = document.getElementById('login-modal');
-                    const mainContainer = document.getElementById('main-container');
-                    if (loginModal) loginModal.style.display = 'none';
-                    if (mainContainer) mainContainer.style.display = 'block';
-                    // Then initialize
+                    // Initialize the system (this will handle showing/hiding modals)
                     this.init();
-                    this.showNotification('Login successful!', 'success');
+                    // Show success message after a short delay
+                    setTimeout(() => {
+                        this.showNotification('Login successful!', 'success');
+                    }, 200);
                 } else {
                     this.showNotification(result.error, 'error');
                 }
