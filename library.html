@@ -3,20 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Library Book Keeping System</title>
+    <title>Library Management System - Professional Edition</title>
     <link rel="stylesheet" href="library.css">
 </head>
 <body>
     <div class="container">
         <header>
-            <h1>📚 Library Book Keeping System</h1>
-            <p>Manage your library collection with ease</p>
+            <h1>📚 Library Management System</h1>
+            <p>Professional Library Management with Enhanced Security & Features</p>
         </header>
 
         <nav class="tabs">
             <button class="tab-btn active" data-tab="add-book">Add Book</button>
             <button class="tab-btn" data-tab="view-books">View Books</button>
             <button class="tab-btn" data-tab="search-books">Search Books</button>
+            <button class="tab-btn" data-tab="borrowing">Borrowing</button>
+            <button class="tab-btn" data-tab="reports">Reports</button>
+            <button class="tab-btn" data-tab="settings">Settings</button>
         </nav>
 
         <main>
@@ -37,7 +40,8 @@
                         
                         <div class="form-group">
                             <label for="isbn">ISBN</label>
-                            <input type="text" id="isbn" name="isbn">
+                            <input type="text" id="isbn" name="isbn" placeholder="ISBN-10 or ISBN-13">
+                            <small class="form-hint">Optional: ISBN-10 (10 digits) or ISBN-13 (13 digits starting with 978/979)</small>
                         </div>
                         
                         <div class="form-group">
@@ -61,7 +65,8 @@
                         
                         <div class="form-group">
                             <label for="publication-year">Publication Year</label>
-                            <input type="number" id="publication-year" name="publication-year" min="1000" max="2024">
+                            <input type="number" id="publication-year" name="publication-year" min="1000" max="2025">
+                            <small class="form-hint">Enter year between 1000 and 2025</small>
                         </div>
                         
                         <div class="form-group">
@@ -153,6 +158,75 @@
                     </div>
                 </div>
             </section>
+
+            <!-- Borrowing Section -->
+            <section id="borrowing" class="tab-content">
+                <div class="borrowing-container">
+                    <h2>Borrowing Management</h2>
+                    
+                    <div class="borrowing-actions">
+                        <button id="register-borrower-btn" class="btn btn-primary">Register New Borrower</button>
+                        <button id="checkout-btn" class="btn btn-primary">Check Out Book</button>
+                        <button id="return-btn" class="btn btn-primary">Return Book</button>
+                        <button id="view-overdue-btn" class="btn btn-warning">View Overdue Books</button>
+                    </div>
+
+                    <div id="borrowing-content">
+                        <div class="borrowers-list" id="borrowers-list">
+                            <!-- Borrowers will be displayed here -->
+                        </div>
+                        <div class="transactions-list" id="transactions-list">
+                            <!-- Transactions will be displayed here -->
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Reports Section -->
+            <section id="reports" class="tab-content">
+                <div class="reports-container">
+                    <h2>Reports & Analytics</h2>
+                    
+                    <div class="reports-actions">
+                        <button id="export-json-btn" class="btn btn-primary">Export to JSON</button>
+                        <button id="export-csv-btn" class="btn btn-primary">Export to CSV</button>
+                        <button id="import-json-btn" class="btn btn-secondary">Import from JSON</button>
+                        <button id="import-csv-btn" class="btn btn-secondary">Import from CSV</button>
+                        <button id="backup-btn" class="btn btn-success">Create Backup</button>
+                        <button id="restore-btn" class="btn btn-warning">Restore from Backup</button>
+                    </div>
+
+                    <div class="reports-stats" id="reports-stats">
+                        <!-- Reports statistics will be displayed here -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- Settings Section -->
+            <section id="settings" class="tab-content">
+                <div class="settings-container">
+                    <h2>System Settings</h2>
+                    
+                    <div class="settings-section">
+                        <h3>Data Management</h3>
+                        <button id="clear-all-data-btn" class="btn btn-danger">Clear All Data</button>
+                        <button id="export-audit-logs-btn" class="btn btn-secondary">Export Audit Logs</button>
+                    </div>
+
+                    <div class="settings-section">
+                        <h3>Borrowing Settings</h3>
+                        <div class="form-group">
+                            <label for="default-loan-days">Default Loan Period (days)</label>
+                            <input type="number" id="default-loan-days" min="1" max="365" value="14">
+                        </div>
+                        <div class="form-group">
+                            <label for="daily-fine">Daily Fine Amount ($)</label>
+                            <input type="number" id="daily-fine" min="0" step="0.01" value="0.50">
+                        </div>
+                        <button id="save-settings-btn" class="btn btn-primary">Save Settings</button>
+                    </div>
+                </div>
+            </section>
         </main>
     </div>
 
@@ -166,6 +240,7 @@
             </div>
             <div class="modal-actions">
                 <button id="edit-book" class="btn btn-primary">Edit Book</button>
+                <button id="checkout-book-btn" class="btn btn-success">Check Out</button>
                 <button id="delete-book" class="btn btn-danger">Delete Book</button>
             </div>
         </div>
@@ -236,12 +311,73 @@
         </div>
     </div>
 
+    <!-- Register Borrower Modal -->
+    <div id="borrower-modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Register New Borrower</h2>
+            <form id="borrower-form">
+                <div class="form-group">
+                    <label for="borrower-name">Name *</label>
+                    <input type="text" id="borrower-name" name="name" required>
+                </div>
+                <div class="form-group">
+                    <label for="borrower-email">Email</label>
+                    <input type="email" id="borrower-email" name="email">
+                </div>
+                <div class="form-group">
+                    <label for="borrower-phone">Phone</label>
+                    <input type="tel" id="borrower-phone" name="phone">
+                </div>
+                <div class="form-group">
+                    <label for="borrower-address">Address</label>
+                    <textarea id="borrower-address" name="address" rows="3"></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary">Register Borrower</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Checkout Modal -->
+    <div id="checkout-modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Check Out Book</h2>
+            <form id="checkout-form">
+                <div class="form-group">
+                    <label for="checkout-book-select">Select Book *</label>
+                    <select id="checkout-book-select" name="bookId" required></select>
+                </div>
+                <div class="form-group">
+                    <label for="checkout-borrower-select">Select Borrower *</label>
+                    <select id="checkout-borrower-select" name="borrowerId" required></select>
+                </div>
+                <div class="form-group">
+                    <label for="checkout-loan-days">Loan Period (days)</label>
+                    <input type="number" id="checkout-loan-days" name="loanDays" min="1" max="365" value="14">
+                </div>
+                <button type="submit" class="btn btn-primary">Check Out</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Import File Input (hidden) -->
+    <input type="file" id="import-file-input" accept=".json,.csv" style="display: none;">
+
+    <!-- Scripts -->
+    <script src="js/validation.js"></script>
+    <script src="js/audit-logger.js"></script>
+    <script src="js/borrowing-system.js"></script>
+    <script src="js/data-export.js"></script>
+    
     <script>
-        // Library Management JavaScript
+        // Enhanced Library Management JavaScript
         class LibraryManager {
             constructor() {
                 this.books = JSON.parse(localStorage.getItem('libraryBooks')) || [];
                 this.currentBookId = null;
+                this.auditLogger = new AuditLogger();
+                this.borrowingSystem = new BorrowingSystem();
                 this.init();
             }
 
@@ -328,56 +464,136 @@
 
             addBook() {
                 const formData = new FormData(document.getElementById('book-form'));
-                const book = {
-                    id: Date.now().toString(),
+                const bookData = {
                     title: formData.get('title'),
                     author: formData.get('author'),
                     isbn: formData.get('isbn'),
                     genre: formData.get('genre'),
                     publicationYear: formData.get('publication-year'),
                     status: formData.get('status'),
-                    location: formData.get('location'),
+                    location: formData.get('location')
+                };
+
+                // Validate book data
+                const validation = Validator.validateBook(bookData);
+                if (!validation.valid) {
+                    this.showNotification(validation.errors.join(', '), 'error');
+                    return;
+                }
+
+                // Check for duplicate ISBN
+                if (bookData.isbn && Validator.isDuplicateISBN(bookData.isbn, this.books)) {
+                    this.showNotification('A book with this ISBN already exists!', 'error');
+                    return;
+                }
+
+                // Sanitize inputs
+                const book = {
+                    id: Date.now().toString(),
+                    title: Validator.sanitize(bookData.title),
+                    author: Validator.sanitize(bookData.author),
+                    isbn: bookData.isbn ? Validator.sanitize(bookData.isbn) : '',
+                    genre: bookData.genre ? Validator.sanitize(bookData.genre) : '',
+                    publicationYear: bookData.publicationYear || null,
+                    status: bookData.status || 'Available',
+                    location: bookData.location ? Validator.sanitize(bookData.location) : '',
                     dateAdded: new Date().toISOString()
                 };
 
                 this.books.push(book);
                 this.saveBooks();
+                
+                // Log the action
+                this.auditLogger.log('CREATE', 'BOOK', book.id, { title: book.title });
+                
                 document.getElementById('book-form').reset();
                 this.displayBooks();
                 this.updateStats();
                 
-                // Show success message
                 this.showNotification('Book added successfully!', 'success');
             }
 
             updateBook() {
                 const bookIndex = this.books.findIndex(book => book.id === this.currentBookId);
-                if (bookIndex !== -1) {
-                    const formData = new FormData(document.getElementById('edit-form'));
-                    this.books[bookIndex] = {
-                        ...this.books[bookIndex],
-                        title: formData.get('title'),
-                        author: formData.get('author'),
-                        isbn: formData.get('isbn'),
-                        genre: formData.get('genre'),
-                        publicationYear: formData.get('publication-year'),
-                        status: formData.get('status'),
-                        location: formData.get('location')
-                    };
-
-                    this.saveBooks();
-                    this.displayBooks();
-                    this.updateStats();
-                    document.getElementById('edit-modal').style.display = 'none';
-                    
-                    this.showNotification('Book updated successfully!', 'success');
+                if (bookIndex === -1) {
+                    this.showNotification('Book not found!', 'error');
+                    return;
                 }
+
+                const formData = new FormData(document.getElementById('edit-form'));
+                const bookData = {
+                    title: formData.get('title'),
+                    author: formData.get('author'),
+                    isbn: formData.get('isbn'),
+                    genre: formData.get('genre'),
+                    publicationYear: formData.get('publication-year'),
+                    status: formData.get('status'),
+                    location: formData.get('location')
+                };
+
+                // Validate book data
+                const validation = Validator.validateBook(bookData);
+                if (!validation.valid) {
+                    this.showNotification(validation.errors.join(', '), 'error');
+                    return;
+                }
+
+                // Check for duplicate ISBN (excluding current book)
+                if (bookData.isbn && Validator.isDuplicateISBN(bookData.isbn, this.books, this.currentBookId)) {
+                    this.showNotification('A book with this ISBN already exists!', 'error');
+                    return;
+                }
+
+                const oldBook = { ...this.books[bookIndex] };
+                
+                // Sanitize and update
+                this.books[bookIndex] = {
+                    ...this.books[bookIndex],
+                    title: Validator.sanitize(bookData.title),
+                    author: Validator.sanitize(bookData.author),
+                    isbn: bookData.isbn ? Validator.sanitize(bookData.isbn) : '',
+                    genre: bookData.genre ? Validator.sanitize(bookData.genre) : '',
+                    publicationYear: bookData.publicationYear || null,
+                    status: bookData.status || 'Available',
+                    location: bookData.location ? Validator.sanitize(bookData.location) : ''
+                };
+
+                this.saveBooks();
+                
+                // Log the action
+                this.auditLogger.log('UPDATE', 'BOOK', this.currentBookId, {
+                    old: oldBook,
+                    new: this.books[bookIndex]
+                });
+                
+                this.displayBooks();
+                this.updateStats();
+                document.getElementById('edit-modal').style.display = 'none';
+                
+                this.showNotification('Book updated successfully!', 'success');
             }
 
             deleteBook() {
-                if (confirm('Are you sure you want to delete this book?')) {
+                const book = this.books.find(b => b.id === this.currentBookId);
+                if (!book) {
+                    this.showNotification('Book not found!', 'error');
+                    return;
+                }
+
+                // Check if book is currently borrowed
+                const activeTransactions = this.borrowingSystem.getActiveTransactions(this.currentBookId);
+                if (activeTransactions.length > 0) {
+                    this.showNotification('Cannot delete book that is currently checked out!', 'error');
+                    return;
+                }
+
+                if (confirm(`Are you sure you want to delete "${book.title}"?`)) {
                     this.books = this.books.filter(book => book.id !== this.currentBookId);
                     this.saveBooks();
+                    
+                    // Log the action
+                    this.auditLogger.log('DELETE', 'BOOK', this.currentBookId, { title: book.title });
+                    
                     this.displayBooks();
                     this.updateStats();
                     document.getElementById('book-modal').style.display = 'none';
@@ -510,24 +726,373 @@
             }
 
             showNotification(message, type = 'info') {
-                // Create notification element
                 const notification = document.createElement('div');
                 notification.className = `notification ${type}`;
                 notification.textContent = message;
-                
-                // Add to page
                 document.body.appendChild(notification);
-                
-                // Remove after 3 seconds
                 setTimeout(() => {
                     notification.remove();
-                }, 3000);
+                }, 5000);
+            }
+
+            // Enhanced methods for new features
+            setupEnhancedEventListeners() {
+                // Borrowing system
+                document.getElementById('register-borrower-btn')?.addEventListener('click', () => {
+                    document.getElementById('borrower-modal').style.display = 'block';
+                });
+
+                document.getElementById('borrower-form')?.addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    this.registerBorrower();
+                });
+
+                document.getElementById('checkout-btn')?.addEventListener('click', () => {
+                    this.showCheckoutModal();
+                });
+
+                document.getElementById('checkout-form')?.addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    this.checkoutBook();
+                });
+
+                document.getElementById('return-btn')?.addEventListener('click', () => {
+                    this.showReturnModal();
+                });
+
+                document.getElementById('view-overdue-btn')?.addEventListener('click', () => {
+                    this.showOverdueBooks();
+                });
+
+                // Export/Import
+                document.getElementById('export-json-btn')?.addEventListener('click', () => {
+                    DataExporter.exportBooksToJSON(this.books);
+                    this.showNotification('Books exported to JSON successfully!', 'success');
+                });
+
+                document.getElementById('export-csv-btn')?.addEventListener('click', () => {
+                    DataExporter.exportBooksToCSV(this.books);
+                    this.showNotification('Books exported to CSV successfully!', 'success');
+                });
+
+                document.getElementById('import-json-btn')?.addEventListener('click', () => {
+                    document.getElementById('import-file-input').accept = '.json';
+                    document.getElementById('import-file-input').click();
+                });
+
+                document.getElementById('import-csv-btn')?.addEventListener('click', () => {
+                    document.getElementById('import-file-input').accept = '.csv';
+                    document.getElementById('import-file-input').click();
+                });
+
+                document.getElementById('import-file-input')?.addEventListener('change', (e) => {
+                    this.handleFileImport(e.target.files[0]);
+                });
+
+                document.getElementById('backup-btn')?.addEventListener('click', () => {
+                    this.createBackup();
+                });
+
+                document.getElementById('restore-btn')?.addEventListener('click', () => {
+                    this.restoreFromBackup();
+                });
+
+                // Settings
+                document.getElementById('export-audit-logs-btn')?.addEventListener('click', () => {
+                    const logs = this.auditLogger.exportLogs();
+                    DataExporter.downloadFile(logs, `audit-logs-${new Date().toISOString().split('T')[0]}.json`, 'application/json');
+                    this.showNotification('Audit logs exported successfully!', 'success');
+                });
+
+                document.getElementById('clear-all-data-btn')?.addEventListener('click', () => {
+                    if (confirm('WARNING: This will delete ALL data including books, borrowers, and transactions. Are you absolutely sure?')) {
+                        if (confirm('This action cannot be undone. Type "DELETE" to confirm.')) {
+                            localStorage.clear();
+                            location.reload();
+                        }
+                    }
+                });
+
+                // Checkout from book details
+                document.getElementById('checkout-book-btn')?.addEventListener('click', () => {
+                    this.showCheckoutModal(this.currentBookId);
+                });
+            }
+
+            registerBorrower() {
+                const formData = new FormData(document.getElementById('borrower-form'));
+                const borrowerData = {
+                    name: formData.get('name'),
+                    email: formData.get('email'),
+                    phone: formData.get('phone'),
+                    address: formData.get('address')
+                };
+
+                const result = this.borrowingSystem.registerBorrower(borrowerData);
+                if (result.success) {
+                    this.auditLogger.log('CREATE', 'BORROWER', result.borrower.id, { name: result.borrower.name });
+                    document.getElementById('borrower-form').reset();
+                    document.getElementById('borrower-modal').style.display = 'none';
+                    this.showNotification('Borrower registered successfully!', 'success');
+                    this.displayBorrowers();
+                } else {
+                    this.showNotification(result.error, 'error');
+                }
+            }
+
+            showCheckoutModal(bookId = null) {
+                const modal = document.getElementById('checkout-modal');
+                const bookSelect = document.getElementById('checkout-book-select');
+                const borrowerSelect = document.getElementById('checkout-borrower-select');
+
+                // Populate books (only available ones)
+                bookSelect.innerHTML = '<option value="">Select a book</option>';
+                this.books.filter(b => b.status === 'Available').forEach(book => {
+                    const option = document.createElement('option');
+                    option.value = book.id;
+                    option.textContent = `${book.title} by ${book.author}`;
+                    if (bookId === book.id) option.selected = true;
+                    bookSelect.appendChild(option);
+                });
+
+                // Populate borrowers
+                borrowerSelect.innerHTML = '<option value="">Select a borrower</option>';
+                this.borrowingSystem.getAllBorrowers().forEach(borrower => {
+                    const option = document.createElement('option');
+                    option.value = borrower.id;
+                    option.textContent = `${borrower.name}${borrower.email ? ' (' + borrower.email + ')' : ''}`;
+                    borrowerSelect.appendChild(option);
+                });
+
+                modal.style.display = 'block';
+            }
+
+            checkoutBook() {
+                const formData = new FormData(document.getElementById('checkout-form'));
+                const bookId = formData.get('bookId');
+                const borrowerId = formData.get('borrowerId');
+                const loanDays = parseInt(formData.get('loanDays')) || 14;
+
+                const result = this.borrowingSystem.checkoutBook(bookId, borrowerId, loanDays);
+                if (result.success) {
+                    // Update book status
+                    const bookIndex = this.books.findIndex(b => b.id === bookId);
+                    if (bookIndex !== -1) {
+                        this.books[bookIndex].status = 'Borrowed';
+                        this.saveBooks();
+                    }
+
+                    this.auditLogger.log('BORROW', 'BOOK', bookId, {
+                        borrowerId: borrowerId,
+                        dueDate: result.transaction.dueDate
+                    });
+
+                    document.getElementById('checkout-form').reset();
+                    document.getElementById('checkout-modal').style.display = 'none';
+                    this.showNotification('Book checked out successfully!', 'success');
+                    this.displayBooks();
+                    this.updateStats();
+                } else {
+                    this.showNotification(result.error, 'error');
+                }
+            }
+
+            showReturnModal() {
+                const overdueBooks = this.borrowingSystem.getOverdueBooks();
+                if (overdueBooks.length === 0) {
+                    this.showNotification('No books to return at this time.', 'info');
+                    return;
+                }
+
+                // Show list of borrowed books for return
+                let message = 'Select a book to return:\n\n';
+                overdueBooks.forEach((transaction, index) => {
+                    const book = this.books.find(b => b.id === transaction.bookId);
+                    const borrower = this.borrowingSystem.getBorrower(transaction.borrowerId);
+                    const fine = this.borrowingSystem.calculateFine(transaction.id);
+                    message += `${index + 1}. ${book ? book.title : 'Unknown'} - ${borrower ? borrower.name : 'Unknown'}`;
+                    if (fine > 0) message += ` (Fine: $${fine.toFixed(2)})`;
+                    message += '\n';
+                });
+
+                // For now, use simple prompt - can be enhanced with modal
+                const selection = prompt(message + '\nEnter book number to return:');
+                if (selection) {
+                    const index = parseInt(selection) - 1;
+                    if (index >= 0 && index < overdueBooks.length) {
+                        this.returnBook(overdueBooks[index].id);
+                    }
+                }
+            }
+
+            returnBook(transactionId) {
+                const transaction = this.borrowingSystem.transactions.find(t => t.id === transactionId);
+                if (!transaction) {
+                    this.showNotification('Transaction not found!', 'error');
+                    return;
+                }
+
+                const fine = this.borrowingSystem.calculateFine(transactionId);
+                const result = this.borrowingSystem.returnBook(transactionId, fine);
+
+                if (result.success) {
+                    // Update book status
+                    const bookIndex = this.books.findIndex(b => b.id === transaction.bookId);
+                    if (bookIndex !== -1) {
+                        this.books[bookIndex].status = 'Available';
+                        this.saveBooks();
+                    }
+
+                    this.auditLogger.log('RETURN', 'BOOK', transaction.bookId, {
+                        fineAmount: fine,
+                        returnDate: result.transaction.returnDate
+                    });
+
+                    this.showNotification(`Book returned successfully!${fine > 0 ? ' Fine: $' + fine.toFixed(2) : ''}`, 'success');
+                    this.displayBooks();
+                    this.updateStats();
+                } else {
+                    this.showNotification(result.error, 'error');
+                }
+            }
+
+            showOverdueBooks() {
+                const overdue = this.borrowingSystem.getOverdueBooks();
+                if (overdue.length === 0) {
+                    this.showNotification('No overdue books!', 'success');
+                    return;
+                }
+
+                let message = `Overdue Books (${overdue.length}):\n\n`;
+                overdue.forEach(transaction => {
+                    const book = this.books.find(b => b.id === transaction.bookId);
+                    const borrower = this.borrowingSystem.getBorrower(transaction.borrowerId);
+                    const fine = this.borrowingSystem.calculateFine(transaction.id);
+                    const dueDate = new Date(transaction.dueDate).toLocaleDateString();
+                    message += `• ${book ? book.title : 'Unknown'} - ${borrower ? borrower.name : 'Unknown'}\n`;
+                    message += `  Due: ${dueDate}, Fine: $${fine.toFixed(2)}\n\n`;
+                });
+
+                alert(message);
+            }
+
+            displayBorrowers() {
+                const container = document.getElementById('borrowers-list');
+                if (!container) return;
+
+                const borrowers = this.borrowingSystem.getAllBorrowers();
+                container.innerHTML = '<h3>Registered Borrowers</h3>';
+                
+                if (borrowers.length === 0) {
+                    container.innerHTML += '<p>No borrowers registered yet.</p>';
+                    return;
+                }
+
+                borrowers.forEach(borrower => {
+                    const div = document.createElement('div');
+                    div.className = 'borrower-card';
+                    div.innerHTML = `
+                        <h4>${borrower.name}</h4>
+                        <p>${borrower.email || 'No email'}</p>
+                        <p>${borrower.phone || 'No phone'}</p>
+                    `;
+                    container.appendChild(div);
+                });
+            }
+
+            handleFileImport(file) {
+                if (!file) return;
+
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    const content = e.target.result;
+                    let result;
+
+                    if (file.name.endsWith('.json')) {
+                        result = DataExporter.importFromJSON(content);
+                    } else if (file.name.endsWith('.csv')) {
+                        result = DataExporter.importFromCSV(content);
+                    } else {
+                        this.showNotification('Unsupported file format!', 'error');
+                        return;
+                    }
+
+                    if (result.success && result.books.length > 0) {
+                        // Merge with existing books (avoid duplicates by ISBN)
+                        result.books.forEach(book => {
+                            if (!book.isbn || !Validator.isDuplicateISBN(book.isbn, this.books)) {
+                                this.books.push(book);
+                                this.auditLogger.log('IMPORT', 'BOOK', book.id, { title: book.title });
+                            }
+                        });
+                        this.saveBooks();
+                        this.displayBooks();
+                        this.updateStats();
+                        this.showNotification(`Imported ${result.books.length} book(s) successfully!`, 'success');
+                    } else {
+                        this.showNotification('Import failed: ' + (result.errors ? result.errors.join(', ') : 'Invalid file'), 'error');
+                    }
+                };
+                reader.readAsText(file);
+            }
+
+            createBackup() {
+                const backup = DataExporter.createBackup({
+                    books: this.books,
+                    borrowers: this.borrowingSystem.borrowers,
+                    transactions: this.borrowingSystem.transactions,
+                    auditLogs: this.auditLogger.logs
+                });
+                DataExporter.downloadFile(backup, `library-backup-${new Date().toISOString().split('T')[0]}.json`, 'application/json');
+                this.showNotification('Backup created successfully!', 'success');
+            }
+
+            restoreFromBackup() {
+                const input = document.createElement('input');
+                input.type = 'file';
+                input.accept = '.json';
+                input.onchange = (e) => {
+                    const file = e.target.files[0];
+                    if (!file) return;
+
+                    const reader = new FileReader();
+                    reader.onload = (event) => {
+                        const result = DataExporter.restoreFromBackup(event.target.result);
+                        if (result.success) {
+                            if (confirm('This will replace all current data. Continue?')) {
+                                if (result.data.books) this.books = result.data.books;
+                                if (result.data.borrowers) this.borrowingSystem.borrowers = result.data.borrowers;
+                                if (result.data.transactions) this.borrowingSystem.transactions = result.data.transactions;
+                                if (result.data.auditLogs) this.auditLogger.logs = result.data.auditLogs;
+
+                                this.saveBooks();
+                                this.borrowingSystem.saveBorrowers();
+                                this.borrowingSystem.saveTransactions();
+                                this.auditLogger.saveLogs();
+
+                                this.displayBooks();
+                                this.updateStats();
+                                this.showNotification('Backup restored successfully!', 'success');
+                            }
+                        } else {
+                            this.showNotification('Restore failed: ' + result.error, 'error');
+                        }
+                    };
+                    reader.readAsText(file);
+                };
+                input.click();
             }
         }
 
         // Initialize the library manager when the page loads
         document.addEventListener('DOMContentLoaded', () => {
-            new LibraryManager();
+            const manager = new LibraryManager();
+            manager.setupEnhancedEventListeners();
+            
+            // Update publication year max to current year + 1
+            const currentYear = new Date().getFullYear();
+            document.getElementById('publication-year')?.setAttribute('max', currentYear + 1);
+            document.getElementById('edit-publication-year')?.setAttribute('max', currentYear + 1);
         });
     </script>
 </body>
